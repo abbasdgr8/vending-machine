@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.abbasdgr8</groupId>
+    <artifactId>vending-machine</artifactId>
+    <name>Vending Machine</name>
+    <description>This example project attempts to emulate the functionality of a real-life Vending Machine.</description>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <contributors>
+        <contributor>
+            <name>Abbas Attarwala</name>
+            <email>abbasdgr8st@gmail.com</email>
+        </contributor>
+    </contributors>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+    </properties>
+    
+    <scm>
+        <connection>scm:git:ssh://git@github.com:abbasdgr8/vending-machine.git</connection>
+        <url>scm:git:https://github.com/abbasdgr8/vending-machine</url>
+        <developerConnection>scm:git:ssh://git@github.com:abbasdgr8/vending-machine.git</developerConnection>
+    </scm>
+    
+</project>
