@@ -22,6 +22,8 @@ public class VendingMachine {
     
     public Collection<Coin> getOptimalChangeFor(int pence) throws NoSuchDenominationException {
         
+        coinDispenser.setUnlimitedSupplyOfCoins(true);
+        
         pence = (pence < 0) ? 0 : pence;
         int remainingChange = pence;
         
@@ -33,6 +35,29 @@ public class VendingMachine {
             if (remainingChange >= currentDenominationValue) {
                 int currentDenominationCoinCount = remainingChange / currentDenominationValue;
                 coinDispenser.releaseCoins(currentDenominationValue, currentDenominationCoinCount);
+                remainingChange = remainingChange - currentDenominationCoinCount * currentDenominationValue;
+            }
+        }
+        
+        return coinDispenser;
+    }
+    
+    
+    public Collection<Coin> getChangeFor(int pence) throws NoSuchDenominationException {
+        
+        coinDispenser.setUnlimitedSupplyOfCoins(false);
+        
+        pence = (pence < 0) ? 0 : pence;
+        int remainingChange = pence;
+        
+        Set<Integer> denominationKeySet = Denomination.denominationLookup.keySet();
+        Integer[] sortedDenominationArray = denominationKeySet.toArray(new Integer[denominationKeySet.size()]);
+        
+        for(int i = sortedDenominationArray.length - 1; i >= 0; i--) {
+            int currentDenominationValue = Denomination.get(sortedDenominationArray[i]).getDenominationValue();
+            if (remainingChange >= currentDenominationValue) {
+                int currentDenominationCoinCount = remainingChange / currentDenominationValue;
+                if(coinDispenser.releaseCoins(currentDenominationValue, currentDenominationCoinCount))
                 remainingChange = remainingChange - currentDenominationCoinCount * currentDenominationValue;
             }
         }

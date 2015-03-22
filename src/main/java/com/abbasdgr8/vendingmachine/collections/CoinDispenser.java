@@ -28,12 +28,19 @@ public final class CoinDispenser extends ArrayBlockingQueue<Coin> {
         return theCoinDispenser;
     }
     
-    public synchronized Collection<Coin> releaseCoins(int coinDenomination, int numberOfCoinsToRelease) 
+    public synchronized boolean releaseCoins(int coinDenomination, int numberOfCoinsToRelease) 
                                             throws NoSuchDenominationException {
         
-        Collection<Coin> coinsReleased = coinBank.withdraw(coinDenomination, numberOfCoinsToRelease);
-        
-        return coinsReleased;
+        return coinBank.withdraw(coinDenomination, numberOfCoinsToRelease);
+    }
+    
+    /**
+     * Set whether the coinBank should have an unlimited Supply Of Coins or not.
+     *
+     * @param unlimitedSupplyOfCoins
+     */
+    public void setUnlimitedSupplyOfCoins(boolean unlimitedSupplyOfCoins) {
+        coinBank.setUnlimitedSupplyOfCoins(unlimitedSupplyOfCoins);
     }
 
     /**
@@ -41,7 +48,6 @@ public final class CoinDispenser extends ArrayBlockingQueue<Coin> {
      */
     private CoinDispenser(int capacity) {
         super(capacity);
-        coinBank.setUnlimitedSupplyOfCoins(true);
     }
    
     /**
@@ -69,17 +75,20 @@ public final class CoinDispenser extends ArrayBlockingQueue<Coin> {
             return theCoinBank;
         }
 
-        public synchronized Collection<Coin> withdraw(int coinDenomination, int numberOfCoinsToRelease) throws NoSuchDenominationException {
+        public synchronized boolean withdraw(int coinDenomination, int numberOfCoinsToRelease) throws NoSuchDenominationException {
+            boolean withdrawSuccess = false;
+            
             if (unlimitedSupplyOfCoins) {
                 for (int i = 0; i < numberOfCoinsToRelease; i++) {
                     Coin coin = new Coin(coinDenomination);
                     theCoinDispenser.offer(coin);
+                    withdrawSuccess = true;
                 }
             } else {
-                // get coins from bank
+                // Read/Update properties
             }
 
-            return theCoinDispenser;
+            return withdrawSuccess;
         }
 
         public synchronized boolean deposit(Collection<Coin> coinsToDeposit) {
