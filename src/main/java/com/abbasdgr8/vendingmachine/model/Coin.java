@@ -31,7 +31,7 @@ public final class Coin {
      */
     public Coin(int denomination) throws NoSuchDenominationException {
         this.denomination = denomination;
-        this.name = Denomination.get(denomination).getCoinName();
+        this.name = Denomination.get(denomination).getDenominationName();
     }
     
     /**
@@ -50,6 +50,49 @@ public final class Coin {
      */
     public String getName() {
         return name;
+    }
+    
+    /**
+     * The over-ridden toString implementation
+     * 
+     * @return 
+     */
+    @Override
+    public String toString() {
+        return this.getName();
+    }
+    
+    /**
+     * The over-ridden hashCode implementation
+     * 
+     * @return 
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + this.denomination;
+        return hash;
+    }
+
+    /**
+     * The over-ridden equals implementation
+     * 
+     * @param obj
+     * @return 
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Coin other = (Coin) obj;
+        if (this.denomination != other.denomination) {
+            return false;
+        }
+        return true;
     }
     
 }

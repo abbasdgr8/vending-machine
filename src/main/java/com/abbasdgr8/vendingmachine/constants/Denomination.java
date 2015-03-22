@@ -1,13 +1,15 @@
 package com.abbasdgr8.vendingmachine.constants;
 
-import com.abbasdgr8.vendingmachine.exceptions.NoSuchDenominationException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+
+import com.abbasdgr8.vendingmachine.exceptions.NoSuchDenominationException;
+import java.util.Set;
 
 /**
  * <pre>
  * An enum class that holds the list of possible {@link com.abbasdgr8.vendingmachine.model.Coin}
- * denominations that the vending machine is capable of dealing with.
+ * denominations that the vending machine deals with.
  * The first argument is the value that this denomination holds.
  * The second argument is the local denomination name.
  * </pre>
@@ -26,20 +28,20 @@ public enum Denomination {
     
     
     /**
-     * A static map that holds a reverse-lookup between the coinValue and the denomination enum.
+     * A static map that holds a reverse-lookup between the denominationValue and the {@link com.abbasdgr8.vendingmachine.constants.Denomination}
+     * We use a {@link java.util.TreeMap} here to obtain a Map of ascending order of denominations.
      */
-    // Use treemap
-    private static final Map<Integer, Denomination> denominationLookup = new HashMap<>();
+    public static final Map<Integer, Denomination> denominationLookup = new TreeMap<>();
     // A static block that builds this reverse-lookup map when this enum class is loaded.
     static {
-        for (Denomination d : Denomination.values()) {
-            denominationLookup.put(d.getCoinValue(), d);
+        for (Denomination currentDenomination : Denomination.values()) {
+            denominationLookup.put(currentDenomination.getDenominationValue(), currentDenomination);
         }
     }
     
     /**
-     * This method will return the {@link com.abbasdgr8.vendingmachine.constants.Denomination} 
-     * from the value of the coin specified.
+     * A null-safe map-reader for the 
+     * {@link com.abbasdgr8.vendingmachine.constants.Denomination#denominationLookup} map.
      * 
      * @param coinValue
      * @return 
@@ -48,7 +50,7 @@ public enum Denomination {
     public static Denomination get(int coinValue) throws NoSuchDenominationException {
         Denomination correspondingDenomination = denominationLookup.get(coinValue);
         if (correspondingDenomination == null) {
-            throw new NoSuchDenominationException("A denomination for coinValue-"
+            throw new NoSuchDenominationException("A denomination of value-"
                     + coinValue + "does not exist.");
         }
         
@@ -56,32 +58,32 @@ public enum Denomination {
     }
     
     
-    private final int coinValue;
-    private final String coinName;
+    private final int denominationValue;
+    private final String denominationName;
     
     /**
      * Returns the coin value associated with the denomination.
      * 
-     * @return coinValue
+     * @return denominationValue
      */
-    public int getCoinValue() {
-        return coinValue;
+    public int getDenominationValue() {
+        return denominationValue;
     }
 
     /**
      * Returns the local name associated with the denomination.
      * 
-     * @return coinName
+     * @return denominationName
      */
-    public String getCoinName() {
-        return coinName;
+    public String getDenominationName() {
+        return denominationName;
     }
     
     /**
      * The private constructor
      */
-    private Denomination(int coinValue, String coinName) {
-        this.coinValue = coinValue;
-        this.coinName = coinName;
+    private Denomination(int denominationValue, String denominationName) {
+        this.denominationValue = denominationValue;
+        this.denominationName = denominationName;
     }
 }
