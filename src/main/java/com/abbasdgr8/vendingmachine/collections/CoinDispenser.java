@@ -5,6 +5,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import com.abbasdgr8.vendingmachine.exceptions.NoSuchDenominationException;
 import com.abbasdgr8.vendingmachine.model.Coin;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 /**
  * This is a real-life vending machine coin dispenser that has been implemented 
@@ -29,7 +31,7 @@ public final class CoinDispenser extends ArrayBlockingQueue<Coin> {
     }
     
     public synchronized boolean releaseCoins(int coinDenomination, int numberOfCoinsToRelease) 
-                                            throws NoSuchDenominationException {
+                                            throws NoSuchDenominationException, ConfigurationException {
         
         return coinBank.withdraw(coinDenomination, numberOfCoinsToRelease);
     }
@@ -75,7 +77,7 @@ public final class CoinDispenser extends ArrayBlockingQueue<Coin> {
             return theCoinBank;
         }
 
-        public synchronized boolean withdraw(int coinDenomination, int numberOfCoinsToRelease) throws NoSuchDenominationException {
+        public synchronized boolean withdraw(int coinDenomination, int numberOfCoinsToRelease) throws NoSuchDenominationException, ConfigurationException {
             boolean withdrawSuccess = false;
             
             if (unlimitedSupplyOfCoins) {
@@ -86,6 +88,21 @@ public final class CoinDispenser extends ArrayBlockingQueue<Coin> {
                 }
             } else {
                 // Read/Update properties
+                PropertiesConfiguration coinInventory = new PropertiesConfiguration("src/main/resources/config/coin-inventory.properties");
+                int coinsRemaining = coinInventory.getInt(String.valueOf(coinDenomination));
+                if (coinsRemaining < numberOfCoinsToRelease) {
+                    return withdrawSuccess;
+                }
+                
+                for (int i = 0; i < numberOfCoinsToRelease; i++) {
+                    Coin coin = new Coin(coinDenomination);
+                    theCoinDispenser.offer(coin);
+                    coinsRemaining--;
+                    coinInventory.setProperty(String.valueOf(coinDenomination), coinsRemaining);
+                    coinInventory.save();
+                }
+                
+                withdrawSuccess = true;
             }
 
             return withdrawSuccess;

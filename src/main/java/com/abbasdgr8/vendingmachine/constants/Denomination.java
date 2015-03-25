@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.abbasdgr8.vendingmachine.exceptions.NoSuchDenominationException;
-import java.util.Set;
 
 /**
  * <pre>

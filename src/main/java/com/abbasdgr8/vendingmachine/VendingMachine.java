@@ -10,6 +10,7 @@ import com.abbasdgr8.vendingmachine.collections.CoinDispenser;
 import com.abbasdgr8.vendingmachine.constants.Denomination;
 import com.abbasdgr8.vendingmachine.exceptions.NoSuchDenominationException;
 import com.abbasdgr8.vendingmachine.model.Coin;
+import org.apache.commons.configuration.ConfigurationException;
 
 /**
  * 
@@ -20,7 +21,7 @@ public class VendingMachine {
     
     private final CoinDispenser coinDispenser = CoinDispenser.getInstance();
     
-    public Collection<Coin> getOptimalChangeFor(int pence) throws NoSuchDenominationException {
+    public Collection<Coin> getOptimalChangeFor(int pence) throws NoSuchDenominationException, ConfigurationException {
         
         coinDispenser.setUnlimitedSupplyOfCoins(true);
         
@@ -34,7 +35,7 @@ public class VendingMachine {
             int currentDenominationValue = Denomination.get(sortedDenominationArray[i]).getDenominationValue();
             if (remainingChange >= currentDenominationValue) {
                 int currentDenominationCoinCount = remainingChange / currentDenominationValue;
-                coinDispenser.releaseCoins(currentDenominationValue, currentDenominationCoinCount);
+                if (coinDispenser.releaseCoins(currentDenominationValue, currentDenominationCoinCount))
                 remainingChange = remainingChange - currentDenominationCoinCount * currentDenominationValue;
             }
         }
@@ -43,7 +44,7 @@ public class VendingMachine {
     }
     
     
-    public Collection<Coin> getChangeFor(int pence) throws NoSuchDenominationException {
+    public Collection<Coin> getChangeFor(int pence) throws NoSuchDenominationException, ConfigurationException {
         
         coinDispenser.setUnlimitedSupplyOfCoins(false);
         
@@ -57,8 +58,9 @@ public class VendingMachine {
             int currentDenominationValue = Denomination.get(sortedDenominationArray[i]).getDenominationValue();
             if (remainingChange >= currentDenominationValue) {
                 int currentDenominationCoinCount = remainingChange / currentDenominationValue;
-                if(coinDispenser.releaseCoins(currentDenominationValue, currentDenominationCoinCount))
-                remainingChange = remainingChange - currentDenominationCoinCount * currentDenominationValue;
+                if (coinDispenser.releaseCoins(currentDenominationValue, currentDenominationCoinCount)) {
+                    remainingChange = remainingChange - currentDenominationCoinCount * currentDenominationValue;
+                }
             }
         }
         
@@ -70,7 +72,7 @@ public class VendingMachine {
         VendingMachine vendingMachine = new VendingMachine();
         Collection<Coin> coins = null;
         try {
-            coins = vendingMachine.getOptimalChangeFor(738);
+            coins = vendingMachine.getChangeFor(199);
             System.out.println(coins.size() + " coins in dispenser.");
             Iterator<Coin> iterator = coins.iterator();
             while (iterator.hasNext()) {
