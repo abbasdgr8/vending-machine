@@ -2,27 +2,46 @@ package com.abbasdgr8.vendingmachine;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.abbasdgr8.vendingmachine.collections.CoinDispenser;
 import com.abbasdgr8.vendingmachine.constants.Denomination;
+import com.abbasdgr8.vendingmachine.exceptions.CoinInventoryError;
 import com.abbasdgr8.vendingmachine.exceptions.NoSuchDenominationException;
 import com.abbasdgr8.vendingmachine.model.Coin;
-import org.apache.commons.configuration.ConfigurationException;
+
 
 /**
- * 
+ * An implementation of a vending machine with coin vending functionalities like a 
+ * real-life vending-machine.
  *
  * @author Abbas Attarwala
  */
 public class VendingMachine {
     
-    private final CoinDispenser coinDispenser = CoinDispenser.getInstance();
+    private static final Logger LOGGER = LoggerFactory.getLogger(VendingMachine.class);
     
-    public Collection<Coin> getOptimalChangeFor(int pence) throws NoSuchDenominationException, ConfigurationException {
+    /**
+     * This method assumes an unlimited supply of coins while evaluating 
+     * {@link com.abbasdgr8.vendingmachine.model.Coin}s to return for change.
+     * It instructs the {@link com.abbasdgr8.vendingmachine.collections.CoinDispenser}
+     * to {@link com.abbasdgr8.vendingmachine.collections.CoinDispenser#getCoins(int, int)}
+     * from the CoinBank.
+     * It starts with coins of the highest denomination and dispenses change 
+     * after which it comes down to lower denominations of coins until all the 
+     * remaining change has been dispensed. This ensures that least number of coins are dispensed.
+     * 
+     * @param pence
+     * @return
+     * @throws NoSuchDenominationException
+     * @throws CoinInventoryError 
+     */
+    public Collection<Coin> getOptimalChangeFor(int pence) throws NoSuchDenominationException, 
+                                                                  CoinInventoryError {
         
+        CoinDispenser coinDispenser = CoinDispenser.getInstance();
         coinDispenser.setUnlimitedSupplyOfCoins(true);
         
         pence = (pence < 0) ? 0 : pence;
@@ -35,7 +54,7 @@ public class VendingMachine {
             int currentDenominationValue = Denomination.get(sortedDenominationArray[i]).getDenominationValue();
             if (remainingChange >= currentDenominationValue) {
                 int currentDenominationCoinCount = remainingChange / currentDenominationValue;
-                if (coinDispenser.releaseCoins(currentDenominationValue, currentDenominationCoinCount))
+                if (coinDispenser.getCoins(currentDenominationValue, currentDenominationCoinCount))
                 remainingChange = remainingChange - currentDenominationCoinCount * currentDenominationValue;
             }
         }
@@ -43,9 +62,24 @@ public class VendingMachine {
         return coinDispenser;
     }
     
-    
-    public Collection<Coin> getChangeFor(int pence) throws NoSuchDenominationException, ConfigurationException {
+    /**
+     * This method deducts coins from an inventory while evaluating 
+     * {@link com.abbasdgr8.vendingmachine.model.Coin}s to return for change.
+     * It instructs the {@link com.abbasdgr8.vendingmachine.collections.CoinDispenser}
+     * to {@link com.abbasdgr8.vendingmachine.collections.CoinDispenser#getCoins(int, int)}
+     * from the CoinBank.
+     * It starts with coins of the highest denomination and dispenses change 
+     * after which it comes down to lower denominations of coins until all the 
+     * remaining change has been dispensed. This ensures that least number of coins are dispensed.
+     * 
+     * @param pence
+     * @return
+     * @throws NoSuchDenominationException
+     * @throws CoinInventoryError 
+     */
+    public Collection<Coin> getChangeFor(int pence) throws NoSuchDenominationException, CoinInventoryError {
         
+        CoinDispenser coinDispenser = CoinDispenser.getInstance();
         coinDispenser.setUnlimitedSupplyOfCoins(false);
         
         pence = (pence < 0) ? 0 : pence;
@@ -58,7 +92,7 @@ public class VendingMachine {
             int currentDenominationValue = Denomination.get(sortedDenominationArray[i]).getDenominationValue();
             if (remainingChange >= currentDenominationValue) {
                 int currentDenominationCoinCount = remainingChange / currentDenominationValue;
-                if (coinDispenser.releaseCoins(currentDenominationValue, currentDenominationCoinCount)) {
+                if (coinDispenser.getCoins(currentDenominationValue, currentDenominationCoinCount)) {
                     remainingChange = remainingChange - currentDenominationCoinCount * currentDenominationValue;
                 }
             }
@@ -66,21 +100,14 @@ public class VendingMachine {
         
         return coinDispenser;
     }
-    
-    
-    public static void main(String[] args) {
-        VendingMachine vendingMachine = new VendingMachine();
-        Collection<Coin> coins = null;
-        try {
-            coins = vendingMachine.getChangeFor(199);
-            System.out.println(coins.size() + " coins in dispenser.");
-            Iterator<Coin> iterator = coins.iterator();
-            while (iterator.hasNext()) {
-                System.out.println(iterator.next());
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(VendingMachine.class.getName()).log(Level.SEVERE, "Something went wrong", ex);
-        }
+
+    /**
+     * This empties/clears the {@link com.abbasdgr8.vendingmachine.collections.CoinDispenser}
+     * off the current lot of {@link com.abbasdgr8.vendingmachine.model.Coin}s
+     */
+    public void emptyCoinDispenser() {
+        CoinDispenser coinDispenser = CoinDispenser.getInstance();
+        coinDispenser.clear();
     }
     
 }

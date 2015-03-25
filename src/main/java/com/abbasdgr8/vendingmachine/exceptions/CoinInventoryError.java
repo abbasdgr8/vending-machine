@@ -1,19 +1,19 @@
 package com.abbasdgr8.vendingmachine.exceptions;
 
 /**
- * This exception is/will be/should be thrown when a coin value is specified 
- * for which the denomination does not exist.
+ * This error is thrown when there is a problem while reading from OR writing to
+ * the coin inventory
  *
  * @author Abbas Attarwala
  */
-public class NoSuchDenominationException extends Exception {
-
+public class CoinInventoryError extends Exception {
+    
     /**
      * Constructor with message arg
      * 
      * @param message 
      */
-    public NoSuchDenominationException(String message) {
+    public CoinInventoryError(String message) {
         super(message);
     }
 
@@ -23,7 +23,7 @@ public class NoSuchDenominationException extends Exception {
      * @param message
      * @param cause 
      */
-    public NoSuchDenominationException(String message, Throwable cause) {
+    public CoinInventoryError(String message, Throwable cause) {
         super(message, cause);
     }
     
