@@ -140,7 +140,16 @@ public final class CoinDispenser extends ArrayBlockingQueue<Coin> {
                     throw new CoinInventoryError("The inventory could not be read", ex);
                 }
                 
-                int coinsRemaining = coinInventory.getInt(String.valueOf(coinDenomination));
+                int coinsRemaining;
+                
+                try {
+                    coinsRemaining = coinInventory.getInt(String.valueOf(coinDenomination));
+                } catch (Exception ex) {
+                    LOGGER.error("There was a problem fetching details from the Coin inventory", ex);
+                    throw new CoinInventoryError("The inventory could not be read", ex);
+                }
+                
+                
                 if (coinsRemaining < numberOfCoinsToRelease) {
                     return withdrawSuccess;
                 }
