@@ -1,4 +1,7 @@
 ##Vending Machine
+
+[![Build Status](https://travis-ci.org/abbasdgr8/vending-machine.svg?branch=master)](https://travis-ci.org/abbasdgr8/vending-machine)
+
 This example provides an implementation of the coin vending capabilities of a real-life vending machine. This example when built, will give a spring-bootable JAR that contains a light-weight Jetty server that would serve two REST resources built with Apache CXF that display how change is managed by dispensing the least number of coins.
 One resource(getOptimalChange) assumes an unlimited supply of coins. Another resource(getChange) uses a property file as a coin inventory to read and update the inventory of coins according to the usage.
 
